@@ -87,6 +87,43 @@ curl --location 'http://localhost:8889/api/quizzes?page=0' \
 --header 'Cookie: jwtCookie=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhYnYuYmciLCJpYXQiOjE2Nzg0ODAzMjIsImV4cCI6MTY3ODU2NjcyMn0.9HPdLW5IUvSCs3wof-hQygtRHIaSlm-PSFd82u-WARU' \
 --data ''
 ```
-### Get all solved quizzes by current logged in user
+
+### Solve a quiz
+* Send a POST request to http://localhost:8889/api/quizzes/{id}/solve containing a JSON with format: 
+`{ "answer" : [answerIndex] } ` `answerIndex` starts from 0 to and end at 3 and a quiz can have multiple answers
+
+Example:
+
+```
+curl --location 'http://localhost:8889/api/quizzes/5/solve' \
+--header 'Content-Type: application/json' \
+--header 'Cookie: jwtCookie=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhYnYuYmciLCJpYXQiOjE2Nzg0ODAzMjIsImV4cCI6MTY3ODU2NjcyMn0.9HPdLW5IUvSCs3wof-hQygtRHIaSlm-PSFd82u-WARU' \
+--data '{
+    "answer" : [1]
+}'  	
+```
+
+### Get all solved quizzes by currently logged in user (has paging)
+* Send a GET request to http://localhost:8889/api/quizzes/solved with parameter `page` 
+ 
+Example:
+
+```
+curl --location 'http://localhost:8889/api/quizzes/solved?page=0' \
+--header 'Cookie: jwtCookie=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhYnYuYmciLCJpYXQiOjE2Nzg0ODAzMjIsImV4cCI6MTY3ODU2NjcyMn0.9HPdLW5IUvSCs3wof-hQygtRHIaSlm-PSFd82u-WARU' \
+--data ''
+```
 
 ### Delete a quiz
+* Send a DELETE request to http://localhost:8889/api/quizzes/{quizId} where `quizId` is the id of the quiz
+*  Note that only the author of the quiz can delete it
+
+
+Example:
+
+```
+curl --location --request DELETE 'http://localhost:8889/api/quizzes/6' \
+--header 'Cookie: jwtCookie=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhYnYuYmciLCJpYXQiOjE2Nzg0ODAzMjIsImV4cCI6MTY3ODU2NjcyMn0.9HPdLW5IUvSCs3wof-hQygtRHIaSlm-PSFd82u-WARU' \
+--data ''
+```
+
