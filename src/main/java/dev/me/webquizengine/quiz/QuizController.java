@@ -3,6 +3,7 @@ package dev.me.webquizengine.quiz;
 import dev.me.webquizengine.quizresult.QuizResult;
 import dev.me.webquizengine.solvedquiz.SolvedQuizDTO;
 import dev.me.webquizengine.solvedquiz.SolvedQuizService;
+import dev.me.webquizengine.validation.exceptions.NoQuizzesUploadedException;
 import dev.me.webquizengine.validation.exceptions.QuizDoesNotExistsException;
 import dev.me.webquizengine.validation.exceptions.UnauthorizedAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class QuizController {
     }
 
     @GetMapping("/quiz")
-    public QuizDTO getQuiz() {
+    public QuizDTO getQuiz() throws NoQuizzesUploadedException {
         return quizService.getQuiz();
     }
 
@@ -45,7 +46,7 @@ public class QuizController {
     }
 
     @GetMapping("/quizzes")
-    public Page<QuizDTO> getQuizzes(@RequestParam int page) {
+    public Page<QuizDTO> getQuizzes(@RequestParam int page) { //error
         return quizService.getQuizzes(page);
     }
 
@@ -65,7 +66,7 @@ public class QuizController {
         quizService.deleteQuiz(id, principal);
     }
 
-    @GetMapping("/quizzes/completed")
+    @GetMapping("/quizzes/solved")
     public Page<SolvedQuizDTO> getSolvedQuizzes(Principal principal , @RequestParam int page){
         return solvedQuizService.getSolvedQuizzes(principal.getName() ,page);
     }

@@ -2,11 +2,13 @@ package dev.me.webquizengine.quiz;
 
 import dev.me.webquizengine.quizresult.QuizResult;
 import dev.me.webquizengine.solvedquiz.SolvedQuizService;
+import dev.me.webquizengine.validation.exceptions.NoQuizzesUploadedException;
 import dev.me.webquizengine.validation.exceptions.QuizDoesNotExistsException;
 import dev.me.webquizengine.validation.exceptions.UnauthorizedAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +18,7 @@ import javax.validation.Valid;
 
 import java.security.Principal;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Validated
@@ -34,14 +37,17 @@ public class QuizService {
         return new QuizDTO(quiz.getId(), quiz.getTitle(), quiz.getText(), quiz.getOptions());
     }
 
-    public QuizDTO getQuiz() {
-        long leftLimit = 0L;
-        long rightLimit = quizRepository.count();
-        long generatedLong = leftLimit + (long) (Math.random() * (rightLimit - leftLimit));
+    public QuizDTO getQuiz() throws NoQuizzesUploadedException {
+        if (quizRepository.count() < 1) {
+            throw new NoQuizzesUploadedException();
+        }
 
+        long limit = quizRepository.findMaxIdNumber(PageRequest.of(0, 1)).get(0);
+        long generatedLong = ThreadLocalRandom.current().nextLong(limit);
         Optional<Quiz> quiz = quizRepository.findById(generatedLong);
+
         while (quiz.isEmpty()) {
-            generatedLong = leftLimit + (long) (Math.random() * (rightLimit - leftLimit));
+            generatedLong = ThreadLocalRandom.current().nextLong(limit);
             quiz = quizRepository.findById(generatedLong);
         }
         return convertFromQuizToDTO(quiz.get());

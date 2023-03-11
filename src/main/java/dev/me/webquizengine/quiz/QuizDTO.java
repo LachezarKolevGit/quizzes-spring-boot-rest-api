@@ -46,7 +46,7 @@ public class QuizDTO {
 
     public QuizDTO(Quiz quiz) {
         this.id = quiz.getId();
-        this.title = quiz.getAuthor();
+        this.title = quiz.getTitle();
         this.text = quiz.getText();
         this.options = quiz.getOptions();
     }

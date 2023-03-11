@@ -1,6 +1,7 @@
 package dev.me.webquizengine.validation;
 
 import dev.me.webquizengine.validation.exceptions.EmailAlreadyTakenException;
+import dev.me.webquizengine.validation.exceptions.NoQuizzesUploadedException;
 import dev.me.webquizengine.validation.exceptions.QuizDoesNotExistsException;
 import dev.me.webquizengine.validation.exceptions.UnauthorizedAccessException;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,8 @@ public class ErrorHandlingControllerAdvice {
 
     private final static String PERMISSION_DENIED_MESSAGE = "You don't have permission to delete quizzes" +
             " that are uploaded by other people";
+
+    private static final String SERVICE_UNAVAILABLE_MESSAGE = "Quizzes couldn't be found";
 
     @ExceptionHandler(ConstraintViolationException.class)  //handles the custom Constraint
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -79,4 +82,14 @@ public class ErrorHandlingControllerAdvice {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(PERMISSION_DENIED_MESSAGE);
     }
+
+    @ExceptionHandler(NoQuizzesUploadedException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)   //added only for readability
+    @ResponseBody
+    protected ResponseEntity<Object> noQuizzesUploadedException(NoQuizzesUploadedException e) {
+
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(SERVICE_UNAVAILABLE_MESSAGE);
+    }
+
 }
